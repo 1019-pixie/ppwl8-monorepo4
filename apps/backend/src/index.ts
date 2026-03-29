@@ -103,9 +103,7 @@ const app = new Elysia()
     }
     return { success: true };
   })
-
   // --- CLASSROOM ROUTES ---
-
   .get("/classroom/courses", async ({ cookie, set }) => {
     const sessionId = (cookie as any).session.value as string;
     const tokens = sessionId ? tokenStore.get(sessionId) : null;
