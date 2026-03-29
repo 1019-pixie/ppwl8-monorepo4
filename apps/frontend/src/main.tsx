@@ -2,10 +2,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-
-// Routing sederhana berdasarkan path
+// Routing sederhana berdasarkan path....
 const path = window.location.pathname
-
+// let app
 let App
 if (path === '/classroom') {
   const { default: ClassroomApp } = await import('./App3')
