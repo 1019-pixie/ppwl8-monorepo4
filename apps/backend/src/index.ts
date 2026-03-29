@@ -70,7 +70,6 @@ const app = new Elysia()
       refresh_token: tokens.refresh_token ?? undefined,
     });
 
-    // Paksa set kuki
     const session = (cookie as any).session;
     session.set({
       value: sessionId,
@@ -85,7 +84,6 @@ const app = new Elysia()
   })
 
   .get("/auth/me", ({ cookie }) => {
-    // Cara paling ampuh: cast ke any dulu baru ambil value-nya
     const sessionId = (cookie as any).session.value as string;
     
     if (!sessionId || !tokenStore.has(sessionId)) {
@@ -103,6 +101,7 @@ const app = new Elysia()
     }
     return { success: true };
   })
+
   // --- CLASSROOM ROUTES ---
   .get("/classroom/courses", async ({ cookie, set }) => {
     const sessionId = (cookie as any).session.value as string;
@@ -143,8 +142,11 @@ const app = new Elysia()
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(3000);
+  console.log("Server running on port 3000");
 }
-//tes
-export default app;
+
+export default {
+  fetch: app.fetch
+}
+
 export type App = typeof app;
-// export
