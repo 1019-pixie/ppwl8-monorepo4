@@ -1,34 +1,42 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import path from "path";
+import { defineConfig, loadEnv } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from "@tailwindcss/vite"
+import path from "path"
 
-// apps/frontend/vite.config.ts
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+// https://vite.dev/config/
+export default defineConfig(({ mode }) => {
+  // 1. Muat env file berdasarkan 'mode' (development, production, dll.)
+  // npm run dev -> development, npm run build -> production
+  // process.cwd() adalah direktori akar proyek Anda
+  // .env.[mode].local (Prioritas tertinggi)
+  // .env.[mode]
+  // .env.local
+  // .env (Prioritas terendah)
+  const env = loadEnv(mode, process.cwd(), '');
+
+  const check = env.VITE_CHECK;
+  if (!check) throw new Error("env is not detected");
+  console.log("Berhasil env:", check)
+
+  return {
+    // Sekarang Anda bisa menggunakan variabel env di sini jika butuh, 
+    // misalnya untuk mengganti port secara dinamis:
+    build: {
+      sourcemap: true
     },
-  },
-  server: {
-    port: 5173,
-    strictPort: true,
-    proxy: {
-      "/api": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-        // Menambahkan dukungan untuk pengiriman cookie/credentials
-        secure: false, 
-        configure: (proxy, _options) => {
-          proxy.on('error', (err, _req, _res) => {
-            console.log('proxy error', err);
-          });
+    plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: { '@': path.resolve(__dirname, './src') }
+    },
+    server: {
+      port: Number(env.VITE_PORT) || 5173,
+      strictPort: true,
+      proxy: {
+        "/api": {
+          target: env.VITE_BACKEND_URL || "http://localhost:3000",
+          changeOrigin: true
         },
-        // Baris yang kamu minta ditambahkan:
-        // Catatan: Di Vite/http-proxy, properti ini biasanya tidak langsung bernama 'credentials', 
-        // tapi setting ini memastikan header 'set-cookie' diteruskan dengan benar.
-      },
-    },
-  },
-});
+      }
+    }
+  }
+})
