@@ -140,13 +140,9 @@ const app = new Elysia()
     return { data: result, message: "Course submissions retrieved" };
   });
 
-if (process.env.NODE_ENV !== "production") {
-  app.listen(3000);
-  console.log("Server running on port 3000");
-}
-
-export default {
-  fetch: app.fetch
-}
-
+app.listen(3000);
+console.log(`🐶 Backend → http://localhost:3000`);
+console.log(`🐶 FRONTEND_URL → ${process.env.FRONTEND_URL ?? "http://localhost:5173"}`);
+console.log(`🐶 DATABASE_URL: ${process.env.DATABASE_URL ?? "file:/app/apps/backend/dev.db"}`);
+console.log(`🐶 GOOGLE_REDIRECT_URI: ${process.env.GOOGLE_REDIRECT_URI ?? "http://localhost:3000/auth/callback"}`);
 export type App = typeof app;
